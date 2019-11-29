@@ -44,10 +44,10 @@ classdef PI_IMU6 < handle
             obj.rot3(1) = 2*(obj.q1*obj.q3 - obj.q0*obj.q2);
             obj.rot3(2) = 2*(obj.q2*obj.q3 + obj.q0*obj.q1);
             obj.rot3(3) = 1 - 2*(obj.q1)^2 - 2*(obj.q2)^2;
-            Q.q1 = obj.q0;
-            Q.q2 = obj.q1;
-            Q.q3 = obj.q2;
-            Q.q4 = obj.q3;
+            Q.q0 = obj.q0;
+            Q.q1 = obj.q1;
+            Q.q2 = obj.q2;
+            Q.q3 = obj.q3;
             euler = computeAngles(Q);
             obj.yaw = euler.heading;
             obj.roll = euler.roll;

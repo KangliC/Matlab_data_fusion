@@ -1,16 +1,4 @@
 %============================================================================
-% Copyright (C) 2015, Heikki Hyyti
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the "Software"),
-% to deal in the Software without restriction, including without limitation
-% the rights to use, copy, modify, merge, publish, distribute, sublicense,
-% and/or sell copies of the Software, and to permit persons to whom the
-% Software is furnished to do so, subject to the following conditions:
-%
-% The above copyright notice and this permission notice shall be included in
-% all copies or substantial portions of the Software.
-%
 % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 % IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 % FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
@@ -21,15 +9,10 @@
 %============================================================================
 
 classdef DCM_IMU9 < handle
-% DCM_IMU Implementation of Hyyti's IMU algorithm
+%   DCM_IMU9 Implementation of IMU algorithm
 %
-%   If you use the algorithm in any scientific context, please cite: 
-%   Heikki Hyyti and Arto Visala, "A DCM Based Attitude Estimation Algorithm for Low-Cost MEMS IMUs,"
-%   International Journal of Navigation and Observation, vol. 2015, Article ID 503814, 18 pages, 2015. 
-%   http://dx.doi.org/10.1155/2015/503814  
-%
-%   Date          Author          Notes
-%   1/12/2015     Heikki Hyyti    Initial release
+%   Date          Author         Source           Notes    
+%   09/12/2019    Kangli Chu     Heikki Hyyti     Initial release
 
     %% Public properties
     properties (Access = public)

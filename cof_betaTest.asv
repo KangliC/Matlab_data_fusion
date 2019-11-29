@@ -18,26 +18,19 @@ Q.q3 = 0;
 Q.q4 = 0;
 
 %cov(data(1))
+tic;
 dcmobj = DCM_IMU;%'MeasurementVariance', var(data(3,1:n))
 dcm9obj = DCM_IMU9;%('DCMVariance', var(data(3,1:n)));
 pi_imu6obj = PI_IMU6;
 eskf_imu9obj = ESKF_IMU9;
 fkf_imu9obj = FKF_IMU9;
-
-tic;
 for i = 1:n
     accel = [data(1,i) data(2,i) data(3,i)];
     gyro = [data(4,i) data(5,i) data(6,i)];
     mag = [data(7,i) data(8,i) data(9,i)];
     
     if strcmp(algorithm_pick, 'FKF')
-        fkf_imu9obj = fkf_imu9obj.Update_IMU9(gyro,accel,mag,deltat);
-        accelArray = [accelArray fkf_imu9obj.acc];
-        distArray = [distArray fkf_imu9obj.dist];
-        velArray = [velArray fkf_imu9obj.vel];
-        EulerAngArray_roll = [EulerAngArray_roll fkf_imu9obj.roll];
-        EulerAngArray_pitch = [EulerAngArray_pitch fkf_imu9obj.pitch];
-        EulerAngArray_heading = [EulerAngArray_heading fkf_imu9obj.yaw];
+        fkf_imu9obj = fkf_imu9obj
     elseif strcmp(algorithm_pick, 'DCM')
         dcmobj = dcmobj.UpdateIMU(gyro,accel,mag,deltat);
         accelArray = [accelArray dcmobj.a];
