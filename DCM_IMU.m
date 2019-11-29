@@ -28,8 +28,8 @@ classdef DCM_IMU < handle
 %   International Journal of Navigation and Observation, vol. 2015, Article ID 503814, 18 pages, 2015. 
 %   http://dx.doi.org/10.1155/2015/503814  
 %
-%   Date          Author          Notes
-%   1/12/2015     Heikki Hyyti    Initial release
+%   Date          Author         Source           Notes    
+%   09/12/2019    Kangli Chu     Heikki Hyyti     New release
 
     %% Public properties
     properties (Access = public)
@@ -180,9 +180,11 @@ classdef DCM_IMU < handle
             x_predict = x + A*x + B*u;  %X(k+1) = X(k) + X'(k)*dt
             P_predict = F * obj.P * F' + Q_;
             
-            if false %obj.cnt>2000
+            if obj.cnt>2000%false %
                 %according to the experiment on sample data, I found the
-                %result was not good with the alg of accel cancelling.
+                %result was not good with the alg of accel cancelling for 
+                %the static data but better for the motion data.
+                %possible reason: the data and algorithm are not calibrated.
                 Omega = [0   -u(1)+x(4) -u(2)+x(5)  -u(3)+x(6);
                          u(1)-x(4) 0     u(3)-x(6)  -u(2)+x(5);
                          u(2)-x(5) -u(3)+x(6) 0     u(1)-x(4);
@@ -195,7 +197,6 @@ classdef DCM_IMU < handle
                 qt_ = (eye(4) + SamplePeriod/2*Omega)*obj.Qt;
                 qt_ = qt_./norm(qt_);
                 q_0 = qt_(1);q_1 = qt_(2);q_2 = qt_(3);q_3 = qt_(4);
-                %q_0 = obj.qt(1);q_1 = obj.qt(2);q_2 = obj.qt(3);q_3 = obj.qt(4);
                 P1 = [q_0 q_1 -q_2 -q_3; -q_3 q_2 q_1 -q_0; q_2 q_3 q_0 q_1];
                 P2 = [q_3 q_2 q_1 q_0; q_0 -q_1 q_2 -q_3; -q_1 -q_0 q_3 q_2];
                 P3 = [-q_2 q_3 -q_0 q_1; q_1 q_0 q_3 q_2; q_0 -q_1 -q_2 q_3];
