@@ -8,7 +8,7 @@ classdef PI_IMU6 < handle
         q2 = 0;
         q3 = 0;        
         Ki = 0.001;
-        Kp = 0.4;
+        Kp = 0.3;
         errInt = [0 0 0];
         yaw = 0;
         pitch = 0;

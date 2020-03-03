@@ -45,6 +45,9 @@ function [Qret,accel] = ahrs_filter(Q, w_x, w_y, w_z, a_x, a_y, a_z, m_x, m_y, m
         % normali_ the flux vector to have only components in the x and z
         b_x = sqrt((h_x * h_x) + (h_y * h_y));
         b_z = h_z;
+    else
+        Qret = Q;
+        return
     end
     
     f1 = 2*q2*q4 - 2*q1*q3 - a_x;
@@ -88,7 +91,7 @@ function [Qret,accel] = ahrs_filter(Q, w_x, w_y, w_z, a_x, a_y, a_z, m_x, m_y, m
 	qDot_omega_2 = 0.5*(q1*w_x + q3*w_z - q4*w_y);
 	qDot_omega_3 = 0.5*(q1*w_y - q2*w_z + q4*w_x);
 	qDot_omega_4 = 0.5*(q1*w_z + q2*w_y - q3*w_x);
-	% compute then integrate the estimated quaternion rate
+	% integrate the estimated quaternion rate
 	Q.q1 = Q.q1 + (qDot_omega_1 - (beta * fgrad(1))) * deltat;
 	Q.q2 = Q.q2 + (qDot_omega_2 - (beta * fgrad(2))) * deltat;
 	Q.q3 = Q.q3 + (qDot_omega_3 - (beta * fgrad(3))) * deltat;

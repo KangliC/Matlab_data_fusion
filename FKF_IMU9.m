@@ -69,10 +69,10 @@ classdef FKF_IMU9 < handle
             mag = mag/norm(mag);
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           
             q0 = obj.qt(1);q1 = obj.qt(2);q2 = obj.qt(3);q3 = obj.qt(4);
-            qp = [-q1 -q2 -q3;
-                  q0  -q3 q2;
-                  q3  q0  -q1;
-                  -q2 q1  q0];
+            qp =[-q1  -q2 -q3;
+                  q0  -q3  q2;
+                  q3   q0 -q1;
+                 -q2   q1  q0];
 %             qp = [q1 q2 q3;
 %                   -q0  -q3 q2;
 %                   q3  -q0  -q1;

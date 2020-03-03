@@ -73,7 +73,11 @@ for i = 1:n
         EulerAngArray_heading = [EulerAngArray_heading dcm9obj.yaw/pi*180];
     elseif strcmp(algorithm_pick, 'ahrs')
         Q = ahrs_filter(Q,data(4,i),data(5,i),data(6,i),data(1,i),data(2,i),data(3,i),data(7,i),data(8,i),data(9,i),deltat,zeta,beta);
-        EulerAng = computeAngles(Q);
+        Qx.q0 = Q.q1;
+        Qx.q1 = Q.q2;
+        Qx.q2 = Q.q3;
+        Qx.q3 = Q.q4;
+        EulerAng = computeAngles(Qx);
         EulerAngArray_roll = [EulerAngArray_roll EulerAng.roll];
         EulerAngArray_pitch = [EulerAngArray_pitch EulerAng.pitch];
         EulerAngArray_heading = [EulerAngArray_heading EulerAng.heading];
@@ -104,7 +108,11 @@ ylabel('Euler Ang (deg)');
 legend('Roll', 'Pitch', 'Heading');
 title(['Consume ' num2str(ct) ' Seconds'],'FontSize',10);
 if strcmp(algorithm_pick, 'ahrs')
-    title(['Beta = ' num2str(beta), '  Zeta = ' num2str(zeta)], 'FontSize', 10);
+    title(['Beta = ' num2str(beta), '  Zeta = ' num2str(zeta), '  t = ' num2str(ct)], 'FontSize', 10);
+    return
+elseif strcmp(algorithm_pick, 'PI_IMU6')
+    title(['t = ' num2str(ct)], 'FontSize', 10);
+    return
 end
 
 subplot(4,1,2);
