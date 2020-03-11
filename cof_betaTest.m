@@ -23,6 +23,7 @@ dcm9obj = DCM_IMU9;%('DCMVariance', var(data(3,1:n)));
 pi_imu6obj = PI_IMU6;
 eskf_imu9obj = ESKF_IMU9;
 fkf_imu9obj = FKF_IMU9;
+ukf_imuobj = UKF_DCM_IMU;
 
 tic;
 for i = 1:n
@@ -38,6 +39,14 @@ for i = 1:n
         EulerAngArray_roll = [EulerAngArray_roll fkf_imu9obj.roll];
         EulerAngArray_pitch = [EulerAngArray_pitch fkf_imu9obj.pitch];
         EulerAngArray_heading = [EulerAngArray_heading fkf_imu9obj.yaw];
+    elseif strcmp(algorithm_pick, 'UKF_DCM')
+        ukf_imuobj = ukf_imuobj.UpdateIMU(gyro,accel,mag,deltat);
+        accelArray = [accelArray ukf_imuobj.a];
+        distArray = [distArray ukf_imuobj.dist];
+        velArray = [velArray ukf_imuobj.vel];
+        EulerAngArray_roll = [EulerAngArray_roll ukf_imuobj.roll/pi*180];
+        EulerAngArray_pitch = [EulerAngArray_pitch ukf_imuobj.pitch/pi*180];
+        EulerAngArray_heading = [EulerAngArray_heading ukf_imuobj.yaw/pi*180];
     elseif strcmp(algorithm_pick, 'DCM')
         dcmobj = dcmobj.UpdateIMU(gyro,accel,mag,deltat);
         accelArray = [accelArray dcmobj.a];
