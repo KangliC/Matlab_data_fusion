@@ -68,6 +68,8 @@ classdef DCM_IMU < handle
         err_b = 0;
         Ki = 0.001;
         Kp = 0.01;
+        
+        acc_obj;
     end
 
     %% Public methods
@@ -89,7 +91,7 @@ classdef DCM_IMU < handle
                     error('Invalid argument');
                 end
             end
-            
+            obj.acc_obj = ACCEL_KF;
             if (updateP), obj.P = [obj.q_dcm2_init*eye(3), zeros(3,3); zeros(3,3), obj.q_gyro_bias2_init*eye(3)]; end
             obj.H = [eye(3)*obj.g0, zeros(3,3)];
             obj.Q = [obj.q_dcm2*eye(3), zeros(3,3); zeros(3,3) obj.q_gyro_bias2*eye(3)];
@@ -158,6 +160,7 @@ classdef DCM_IMU < handle
             end   
             
             realz = z;
+            %z = z - obj.acc_obj.state(4:6);
             x = obj.state;
             x_last = x;
             Q_ = SamplePeriod^2 * obj.Q; %Process noise covariance with time dependent noise
@@ -174,7 +177,7 @@ classdef DCM_IMU < handle
             % Model generation
             A = [zeros(3,3) -SamplePeriod*C3X; zeros(3,6)];
             B = [SamplePeriod*C3X; zeros(3,3)];
-            F = eye(6) + [-SamplePeriod*UX, -SamplePeriod*C3X; zeros(3,6)];
+            F = eye(6) + [-SamplePeriod*UX, -SamplePeriod*C3X; zeros(3,6)];%+A*A*SamplePeriod^2/2;
 
             % Kalman a priori prediction
             x_predict = x + A*x + B*u;  %X(k+1) = X(k) + X'(k)*dt
@@ -204,10 +207,14 @@ classdef DCM_IMU < handle
                 dg_b = DCM*obj.a; % pure accel in predicted body frame
                 z = z - dg_b;% real accel - pure accel = accel caused by gravity
             end
-            obj.cnt = obj.cnt+1;
+            %obj.cnt = obj.cnt+1;
             % recompute R using the error between acceleration and the model of g 
             % (estimate of the magnitude of a0 in a = a0 + g)
-            a_predict = z - x_predict(1:3)*obj.g0;
+            a_predict = z - x(1:3)*obj.g0;
+            
+            obj.acc_obj = obj.acc_obj.UpdateKF(a_predict,SamplePeriod);
+            z = z - obj.acc_obj.state(4:6);
+            a_predict = z - x(1:3)*obj.g0;
             a_len = sqrt(a_predict'*a_predict);
             R = (a_len*obj.r_a2 + obj.r_acc2)*eye(3);
 
@@ -302,8 +309,7 @@ classdef DCM_IMU < handle
                 obj.pitch = euler.pitch/180*pi;
                 [obj.Dcm] = obj.DCMfromQ(Qdcm);
                 obj.first_row = obj.Dcm(1,:)';
-                obj.a = obj.Dcm*realz - [0;0;obj.g0];
-                obj.a = obj.a - obj.gbias*obj.g0;% test eliminate gbias.
+                obj.a = obj.Dcm*z - [0;0;obj.g0];%z <---> realz
                 
             else
                 % alternative method estimating the whole rotation matrix
